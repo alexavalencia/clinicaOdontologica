@@ -24,4 +24,12 @@ public class PacienteService {
     public List<Paciente> getAll(){
         return pacienteIDao.getAll();
     }
+
+    public void updatePaciente(Paciente paciente){
+        pacienteIDao.update(paciente);
+    }
+
+    public void deletePacienteById(Integer id){
+        pacienteIDao.delete(id);
+    }
 }

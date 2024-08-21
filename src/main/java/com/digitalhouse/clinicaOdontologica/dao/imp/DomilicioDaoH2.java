@@ -18,6 +18,9 @@ public class DomilicioDaoH2 implements IDao<Domicilio> {
 
     private  static final String SELECT_BY_ID="SELECT * FROM DOMICILIOS WHERE ID=? ";
     private  static final String SELECT_ALL="SELECT * FROM DOMICILIOS";
+
+    private static final String UPDATE= "UPDATE DOMICILIOS SET CALLE=?, NUMERO=?, LOCALIDAD=?, PROVINCIA=? WHERE ID=?";
+    private static final String DELETE= "DELETE FROM DOMICILIOS WHERE ID=?";
     private Connection connection= null;
     @Override
     public Domicilio save(Domicilio domicilio) {
@@ -123,5 +126,79 @@ public class DomilicioDaoH2 implements IDao<Domicilio> {
             }
         }
         return domicilios;
+    }
+
+    @Override
+    public void update(Domicilio domicilio) {
+        try {
+            connection= H2Connection.getConnection();
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+            preparedStatement.setString(1,domicilio.getCalle());
+            preparedStatement.setInt(2,domicilio.getNumero());
+            preparedStatement.setString(3,domicilio.getLocalidad());
+            preparedStatement.setString(4,domicilio.getProvincia());
+            preparedStatement.setInt(5,domicilio.getId());
+            preparedStatement.executeUpdate();
+            connection.commit();
+            LOGGER.info("Domicilio actualizado "+domicilio);
+
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                LOGGER.error(ex.getMessage());
+            }finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    LOGGER.error(ex.getMessage());
+                }
+            }
+
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+
+
+    }
+
+    @Override
+    public void delete(Integer id) {
+        try {
+            connection= H2Connection.getConnection();
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+            preparedStatement.setInt(1,id);
+            preparedStatement.executeUpdate();
+            connection.commit();
+            LOGGER.info("Domicilio Eliminado ");
+
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                LOGGER.error(ex.getMessage());
+            }finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    LOGGER.error(ex.getMessage());
+                }
+            }
+
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
     }
 }

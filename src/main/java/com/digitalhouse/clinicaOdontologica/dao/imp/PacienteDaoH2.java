@@ -22,6 +22,10 @@ public class PacienteDaoH2 implements IDao<Paciente> {
     private static final  String SELECT_BY_ID="SELECT * FROM PACIENTES WHERE ID=?";
 
     private  static final String SELECT_ALL="SELECT * FROM PACIENTES";
+
+    private  static final String UPDATE="UPDATE PACIENTES SET APELLIDO=?,NOMBRE=?,DNI=?,FECHA_INGRESO=?,ID_DOMICILIO=? WHERE ID=?";
+
+    private  static final String DELETE="DELETE FROM PACIENTES WHERE ID=?";
     private Connection connection= null;
     @Override
     public Paciente save(Paciente paciente) {
@@ -136,5 +140,90 @@ public class PacienteDaoH2 implements IDao<Paciente> {
             }
         }
         return pacientes;
+    }
+
+    @Override
+    public void update(Paciente paciente) {
+        DomilicioDaoH2 domilicioDaoH2 = new DomilicioDaoH2();
+        domilicioDaoH2.update(paciente.getDomicilio());
+
+        try {
+            connection= H2Connection.getConnection();
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+            preparedStatement.setString(1,paciente.getApellido());
+            preparedStatement.setString(2,paciente.getNombre());
+            preparedStatement.setString(3,paciente.getDni());
+            preparedStatement.setDate(4, Date.valueOf(paciente.getFechaIngreso()));
+            preparedStatement.setInt(5,paciente.getDomicilio().getId());
+            preparedStatement.setInt(6,paciente.getId());
+            preparedStatement.executeUpdate();
+            connection.commit();
+            LOGGER.info("Paciente modificado "+paciente);
+
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                LOGGER.error(ex.getMessage());
+            }finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    LOGGER.error(ex.getMessage());
+                }
+            }
+
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Paciente paciente = getById(id);
+        DomilicioDaoH2 domilicioDaoH2 = new DomilicioDaoH2();
+
+        try {
+            connection= H2Connection.getConnection();
+            connection.setAutoCommit(false);
+            if(paciente!= null){
+                domilicioDaoH2.delete(paciente.getDomicilio().getId());
+                PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+                preparedStatement.setInt(1,paciente.getId());
+                preparedStatement.executeUpdate();
+                connection.commit();
+                LOGGER.info("Paciente fue eliminado ");
+
+            } else{
+                LOGGER.info("Paciente no fue encontrado");
+            }
+        }catch (Exception e){
+            LOGGER.error(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                LOGGER.error(ex.getMessage());
+            }finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    LOGGER.error(ex.getMessage());
+                }
+            }
+
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+
     }
 }

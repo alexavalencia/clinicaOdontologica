@@ -25,5 +25,12 @@ public class OdontologoService {
     public List<Odontologo> getAll(){
         return  odontologoIDao.getAll();
     }
+    public void updateOdontologo(Odontologo odontologo){
+        odontologoIDao.update(odontologo);
+    }
+
+    public void deleteOdontologo(Integer id){
+        odontologoIDao.delete(id);
+    }
 
 }

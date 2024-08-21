@@ -27,7 +27,7 @@ class OdontologoServiceTest {
     @DisplayName("Guardar Odontologo")
     void test1(){
         Odontologo odontologo = new Odontologo("123458","Camila","Valencia");
-        Odontologo odontologoGuardado = odontologoService.guardar(odontologo);
+        Odontologo odontologoGuardado = odontologoService.saveOdontologo(odontologo);
         assertNotNull(odontologoGuardado.getId());
 
     }
@@ -35,7 +35,7 @@ class OdontologoServiceTest {
     @Test
     @DisplayName("Obtener odontologo por id")
     void test2(){
-        Odontologo odontologoGuardado = odontologoService.obetnerPorId(2);
+        Odontologo odontologoGuardado = odontologoService.getOdontologoById(2);
         assertEquals(2, odontologoGuardado.getId());
         assertEquals("GIRALDO", odontologoGuardado.getApellido());
 
@@ -45,7 +45,7 @@ class OdontologoServiceTest {
     @Test
     @DisplayName("Obtener todos los odontologos")
     void test4(){
-        List<Odontologo> odontologoGuardados = odontologoService.obtenerTodos();
+        List<Odontologo> odontologoGuardados = odontologoService.getAll();
         assertTrue(odontologoGuardados.size()>0);
 
 
