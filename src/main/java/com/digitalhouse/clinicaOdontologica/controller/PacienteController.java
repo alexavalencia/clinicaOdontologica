@@ -2,7 +2,9 @@ package com.digitalhouse.clinicaOdontologica.controller;
 
 import com.digitalhouse.clinicaOdontologica.model.Paciente;
 import com.digitalhouse.clinicaOdontologica.service.PacienteService;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,31 +21,51 @@ public class PacienteController {
 
 
     @GetMapping("/buscar/{id}")
-    public Paciente buscarPorId( @PathVariable Integer id){
-        return pacienteService.getPacienteById(id);
+    public ResponseEntity<?> buscarPorId( @PathVariable Integer id){
+        Paciente paciente = pacienteService.getPacienteById(id);
+        if(paciente != null){
+            return ResponseEntity.ok(paciente);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontro el paciente") ;
 
     }
 
     @GetMapping("/buscarTodos")
-    public List<Paciente> buscarTodos(){
-        return pacienteService.getAll();
+    public ResponseEntity<?> buscarTodos(){
+        List<Paciente> pacientes = pacienteService.getAll();
+        if(!pacientes.isEmpty()){
+            return ResponseEntity.ok(pacientes);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No hay pacientes ingresados") ;
+
 
     }
 
     @PostMapping("/agregar")
-    public Paciente agregarPaciente(@RequestBody Paciente paciente){
-        return pacienteService.savePaciente(paciente);
+    public ResponseEntity<Paciente> agregarPaciente(@RequestBody Paciente paciente){
+        return ResponseEntity.ok(pacienteService.savePaciente(paciente));
     }
 
     @PutMapping("/modificar")
-    public String modificarPaciente(@RequestBody Paciente paciente){
-        pacienteService.updatePaciente(paciente);
-        return "El paciente fue modificado";
+    public ResponseEntity<String> modificarPaciente(@RequestBody Paciente paciente){
+        Paciente pacienteActual = pacienteService.getPacienteById(paciente.getId());
+        if(pacienteActual != null){
+            pacienteService.updatePaciente(paciente);
+            return ResponseEntity.status(HttpStatus.OK).body("Paciente fue actualizado");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontro el paciente") ;
+
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public String eliminarPaciente(@PathVariable Integer id){
-        pacienteService.deletePacienteById(id);
-        return "El paciente fue eliminado";
+    public ResponseEntity<?> eliminarPaciente(@PathVariable Integer id){
+        Paciente pacienteActual = pacienteService.getPacienteById(id);
+        if(pacienteActual != null){
+            pacienteService.deletePacienteById(id);
+            return  ResponseEntity.status(HttpStatus.OK).body("Paciente fue eliminado");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontro el paciente") ;
+
+
     }
 }

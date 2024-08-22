@@ -1,10 +1,7 @@
 package com.digitalhouse.clinicaOdontologica.controller;
 
 import com.digitalhouse.clinicaOdontologica.model.Odontologo;
-import com.digitalhouse.clinicaOdontologica.model.Paciente;
 import com.digitalhouse.clinicaOdontologica.service.OdontologoService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
