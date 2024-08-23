@@ -33,11 +33,24 @@ public class TurnoService {
         return null;
     }
     public Turno getTurnoById(Integer id){
+
         return turnoIDao.getById(id);
     }
 
     public List<Turno> getAll(){
         return turnoIDao.getAll();
     }
-
+    public void updateTurno(Turno turno){
+        Paciente paciente = pacienteService.getPacienteById(turno.getPaciente().getId());
+        Odontologo odontologo = odontologoService.getOdontologoById(turno.getOdontologo().getId());
+        Turno turnoRetorno= null;
+        if(paciente!= null && odontologo!=null){
+            turno.setPaciente(paciente);
+            turno.setOdontologo(odontologo);
+            turnoIDao.update(turno);
+        }
+    }
+    public void deleteTurno(Integer id){
+        turnoIDao.delete(id);
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Repository
 public class TurnoMemoria implements IDao<Turno> {
@@ -44,11 +45,16 @@ public class TurnoMemoria implements IDao<Turno> {
 
     @Override
     public void update(Turno turno) {
-
+        Turno turnoActualizar = turnos.stream().filter(x -> x.getId()== turno.getId()).findFirst().get();
+        turnoActualizar.setPaciente(turno.getPaciente());
+        turnoActualizar.setOdontologo(turno.getOdontologo());
+        turnoActualizar.setFecha(turno.getFecha());
+        LOGGER.info("El turno fue actualizado correctamente"+ turno);
     }
 
     @Override
     public void delete(Integer id) {
-
+        turnos.remove(id-1);
+        LOGGER.info("El turno fue eliminado");
     }
 }
