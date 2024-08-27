@@ -2,9 +2,9 @@ package com.digitalhouse.clinicaOdontologica;
 
 import com.digitalhouse.clinicaOdontologica.dao.imp.PacienteDaoH2;
 import com.digitalhouse.clinicaOdontologica.db.H2Connection;
-import com.digitalhouse.clinicaOdontologica.model.Domicilio;
-import com.digitalhouse.clinicaOdontologica.model.Paciente;
-import com.digitalhouse.clinicaOdontologica.service.PacienteService;
+import com.digitalhouse.clinicaOdontologica.entity.Domicilio;
+import com.digitalhouse.clinicaOdontologica.entity.Paciente;
+import com.digitalhouse.clinicaOdontologica.service.impl.PacienteService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,29 +1,29 @@
 package com.digitalhouse.clinicaOdontologica.controller;
 
-import com.digitalhouse.clinicaOdontologica.model.Odontologo;
-import com.digitalhouse.clinicaOdontologica.service.OdontologoService;
+import com.digitalhouse.clinicaOdontologica.entity.Odontologo;
+import com.digitalhouse.clinicaOdontologica.service.IOdontologoService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/odontologo")
 public class OdontologoController {
 
-    private OdontologoService odontologoService;
+    private IOdontologoService odontologoService;
 
-    public OdontologoController(OdontologoService odontologoService) {
+    public OdontologoController(IOdontologoService odontologoService) {
         this.odontologoService = odontologoService;
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id){
-        Odontologo odontologo = odontologoService.getOdontologoById(id);
-        if(odontologo != null){
-        return ResponseEntity.ok(odontologo);
+        Optional<Odontologo> odontologo = odontologoService.getOdontologoById(id);
+        if(odontologo.isPresent()){
+        return ResponseEntity.ok(odontologo.get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El odontologo no fue encontrado");
     }
@@ -44,18 +44,18 @@ public class OdontologoController {
 
     @PutMapping("/modificar")
     public ResponseEntity<String> modificarOdontologo(@RequestBody Odontologo odontologo){
-        Odontologo odontologoAModificar = odontologoService.getOdontologoById(odontologo.getId());
-        if(odontologoAModificar != null){
-        odontologoService.updateOdontologo(odontologo);
-        return ResponseEntity.status(HttpStatus.OK).body("El odontologo fue actualizado");
+        Optional<Odontologo> odontologoAModificar = odontologoService.getOdontologoById(odontologo.getId());
+        if(odontologoAModificar.isPresent()){
+            odontologoService.updateOdontologo(odontologo);
+            return ResponseEntity.status(HttpStatus.OK).body("El odontologo fue actualizado");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El Odontologo no fue encontrado para modificarlo");
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarOdontologo(@PathVariable Integer id){
-        Odontologo odontogoAEliminar = odontologoService.getOdontologoById(id);
-        if(odontogoAEliminar != null){
+        Optional<Odontologo> odontogoAEliminar = odontologoService.getOdontologoById(id);
+        if(odontogoAEliminar.isPresent()){
             odontologoService.deleteOdontologo(id);
             return ResponseEntity.status(HttpStatus.OK).body("El odontologo fue eliminado");
         }
