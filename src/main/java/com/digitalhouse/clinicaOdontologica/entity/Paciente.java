@@ -1,5 +1,7 @@
 package com.digitalhouse.clinicaOdontologica.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,7 +26,14 @@ public class Paciente {
     private String nombre;
     private String dni;
     private LocalDate fechaIngreso;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_domicilio")
     private Domicilio domicilio;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.REMOVE)
+    //@JsonManagedReference(value = "paciente-turno")
+    @JsonIgnore
+    private Set<Turno> turnoSet;
 
     @Override
     public String toString() {

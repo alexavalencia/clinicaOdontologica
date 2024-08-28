@@ -1,10 +1,14 @@
 package com.digitalhouse.clinicaOdontologica.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,6 +23,11 @@ public class Odontologo {
     private String numeroMatricula;
     private String nombre;
     private String apellido;
+
+    @OneToMany(mappedBy = "odontologo")
+    //@JsonManagedReference(value = "odontologo-turno")
+    @JsonIgnore
+    private Set<Turno> turnoSet;
 
 
     @Override
