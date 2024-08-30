@@ -1,5 +1,8 @@
 package com.digitalhouse.clinicaOdontologica.controller;
 
+import com.digitalhouse.clinicaOdontologica.dto.request.TurnoRequestDTO;
+import com.digitalhouse.clinicaOdontologica.dto.request.TurnoUpdateDTO;
+import com.digitalhouse.clinicaOdontologica.dto.response.TurnoResponseDTO;
 import com.digitalhouse.clinicaOdontologica.entity.Turno;
 import com.digitalhouse.clinicaOdontologica.service.ITurnoService;
 import org.springframework.http.HttpStatus;
@@ -20,8 +23,8 @@ public class TurnoController {
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<?> gurdarTurno(@RequestBody Turno turno){
-        Turno turno1 = turnoService.saveTurno(turno);
+    public ResponseEntity<?> gurdarTurno(@RequestBody TurnoRequestDTO turnoRequestDTO){
+        TurnoResponseDTO turno1 = turnoService.saveTurno(turnoRequestDTO);
         if (turno1!= null){
             return ResponseEntity.ok(turno1);
         }else{
@@ -30,13 +33,13 @@ public class TurnoController {
 
     }
     @GetMapping("/buscarTodos")
-    public ResponseEntity<List<Turno>> buscarTodos(){
+    public ResponseEntity<List<TurnoResponseDTO>> buscarTodos(){
         return ResponseEntity.ok(turnoService.getAll());
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarTurno(@PathVariable Integer id){
-        Optional<Turno> turnoAEliminar = turnoService.getTurnoById(id);
+        Optional<TurnoResponseDTO> turnoAEliminar = turnoService.getTurnoById(id);
         if(turnoAEliminar.isPresent()){
             turnoService.deleteTurno(id);
             return ResponseEntity.status(HttpStatus.OK).body("El turno fue eliminado");
@@ -44,8 +47,8 @@ public class TurnoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El turno no fue encontrado para eliminarlo");
     }
     @PutMapping("/modificar")
-    public ResponseEntity<String> modificarTurno(@RequestBody Turno turno){
-        Optional<Turno> turnoAModificar = turnoService.getTurnoById(turno.getId());
+    public ResponseEntity<String> modificarTurno(@RequestBody TurnoUpdateDTO turno){
+        Optional<TurnoResponseDTO> turnoAModificar = turnoService.getTurnoById(turno.getId());
         if(turnoAModificar.isPresent()){
             turnoService.updateTurno(turno);
             return ResponseEntity.status(HttpStatus.OK).body("El turno fue actualizado");
@@ -54,7 +57,7 @@ public class TurnoController {
     }
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id){
-        Optional<Turno> turno = turnoService.getTurnoById(id);
+        Optional<TurnoResponseDTO> turno = turnoService.getTurnoById(id);
         if(turno.isPresent()){
             return ResponseEntity.ok(turno.get());
         }
