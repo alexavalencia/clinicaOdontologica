@@ -76,6 +76,7 @@ public class TurnoService implements ITurnoService {
         Turno turnoDesdeDB = null;
         TurnoResponseDTO turnoARetornar = null;
         if(paciente.isPresent() && odontologo.isPresent()){
+            turno.setId(turnoUpdate.getId());
             turno.setPaciente(paciente.get());
             turno.setOdontologo(odontologo.get());
             turno.setFecha(LocalDate.parse(turnoUpdate.getFecha()));

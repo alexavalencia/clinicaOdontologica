@@ -12,4 +12,5 @@ public interface IPacienteService {
      List<Paciente> getAll();
      void updatePaciente(Paciente paciente);
      void deletePacienteById(Integer id);
+
 }

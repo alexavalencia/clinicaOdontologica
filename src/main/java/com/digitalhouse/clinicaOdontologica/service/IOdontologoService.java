@@ -10,6 +10,7 @@ public interface IOdontologoService {
      Optional<Odontologo> getOdontologoById(int  id);
      List<Odontologo> getAll();
      void updateOdontologo(Odontologo odontologo);
-
      void deleteOdontologo(Integer id);
+     Odontologo getOdontologoByNumeroMatricula(String numeroMatricula);
+     List<Odontologo> getByApellido(String apellido);
 }
