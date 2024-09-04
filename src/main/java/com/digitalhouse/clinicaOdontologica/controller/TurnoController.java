@@ -25,11 +25,8 @@ public class TurnoController {
     @PostMapping("/agregar")
     public ResponseEntity<?> gurdarTurno(@RequestBody TurnoRequestDTO turnoRequestDTO){
         TurnoResponseDTO turno1 = turnoService.saveTurno(turnoRequestDTO);
-        if (turno1!= null){
-            return ResponseEntity.ok(turno1);
-        }else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El paciente o el odontologo no fueron encontrados");
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(turno1);
+
 
     }
     @GetMapping("/buscarTodos")
@@ -39,22 +36,16 @@ public class TurnoController {
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarTurno(@PathVariable Integer id){
-        Optional<TurnoResponseDTO> turnoAEliminar = turnoService.getTurnoById(id);
-        if(turnoAEliminar.isPresent()){
             turnoService.deleteTurno(id);
-            return ResponseEntity.status(HttpStatus.OK).body("El turno fue eliminado");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El turno no fue encontrado para eliminarlo");
+            return ResponseEntity.status(HttpStatus.OK).body("Turno fue eliminado");
     }
+
     @PutMapping("/modificar")
     public ResponseEntity<String> modificarTurno(@RequestBody TurnoUpdateDTO turno){
-        Optional<TurnoResponseDTO> turnoAModificar = turnoService.getTurnoById(turno.getId());
-        if(turnoAModificar.isPresent()){
-            turnoService.updateTurno(turno);
-            return ResponseEntity.status(HttpStatus.OK).body("El turno fue actualizado");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El turno no fue encontrado para modificarlo");
+        turnoService.updateTurno(turno);
+        return ResponseEntity.status(HttpStatus.OK).body("El turno fue actualizado");
     }
+
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id){
         Optional<TurnoResponseDTO> turno = turnoService.getTurnoById(id);

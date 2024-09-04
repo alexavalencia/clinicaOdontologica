@@ -9,8 +9,12 @@ import com.digitalhouse.clinicaOdontologica.dto.response.TurnoResponseDTO;
 import com.digitalhouse.clinicaOdontologica.entity.Odontologo;
 import com.digitalhouse.clinicaOdontologica.entity.Paciente;
 import com.digitalhouse.clinicaOdontologica.entity.Turno;
+import com.digitalhouse.clinicaOdontologica.exception.BadRequestException;
+import com.digitalhouse.clinicaOdontologica.exception.ResourceNotFoundException;
 import com.digitalhouse.clinicaOdontologica.repository.ITurnoRepository;
 import com.digitalhouse.clinicaOdontologica.service.ITurnoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +24,8 @@ import java.util.Optional;
 
 @Service
 public class TurnoService implements ITurnoService {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(Turno.class);
 
     private ITurnoRepository turnoRepository;
     private PacienteService pacienteService;
@@ -33,12 +39,12 @@ public class TurnoService implements ITurnoService {
 
     @Override
     public TurnoResponseDTO saveTurno(TurnoRequestDTO turnoRequestDTO){
-        Optional<Paciente> paciente = pacienteService.getPacienteById(turnoRequestDTO.getPaciente_id());
-        Optional<Odontologo> odontologo = odontologoService.getOdontologoById(turnoRequestDTO.getOdontologo_id());
-        Turno turno = new Turno();
-        Turno turnoDesdeDB = null;
-        TurnoResponseDTO turnoARetornar = null;
-        if(paciente.isPresent() && odontologo.isPresent()){
+        try {
+            Optional<Paciente> paciente = pacienteService.getPacienteById(turnoRequestDTO.getPaciente_id());
+            Optional<Odontologo> odontologo = odontologoService.getOdontologoById(turnoRequestDTO.getOdontologo_id());
+            Turno turno = new Turno();
+            Turno turnoDesdeDB = null;
+            TurnoResponseDTO turnoARetornar = null;
             //mappear el turnoRequestDto a Turno
             turno.setPaciente(paciente.get());
             turno.setOdontologo(odontologo.get());
@@ -47,8 +53,12 @@ public class TurnoService implements ITurnoService {
             turnoDesdeDB = turnoRepository.save(turno);
             // mappear el turnoDesdeDB a TurnoResponseDTO
             turnoARetornar = mapperTurnoResponseDto(turnoDesdeDB);
+            LOGGER.info("Turno fue  guardado " + turnoARetornar.toString());
+            return turnoARetornar;
+        }catch (ResourceNotFoundException e){
+            LOGGER.info("El paciente con id " + turnoRequestDTO.getPaciente_id() + " o el odontologo con id " + turnoRequestDTO.getOdontologo_id() + " no fue encontrado");
+            throw new BadRequestException("El paciente con id " + turnoRequestDTO.getPaciente_id() + " o el odontologo con id " + turnoRequestDTO.getOdontologo_id() + " no fue encontrado");
         }
-        return turnoARetornar;
     }
     @Override
     public Optional<TurnoResponseDTO> getTurnoById(Integer id){
@@ -57,6 +67,7 @@ public class TurnoService implements ITurnoService {
         if(turnoDesdeDB.isPresent()){
             turnoResponseDTO = mapperTurnoResponseDto(turnoDesdeDB.get());
         }
+        LOGGER.info("Turno encontrado " + turnoDesdeDB.get().toString());
         return Optional.ofNullable(turnoResponseDTO);
     }
     @Override
@@ -66,26 +77,38 @@ public class TurnoService implements ITurnoService {
         for(Turno t: turnos){
             turnosRespuesta.add(mapperTurnoResponseDto(t));
         }
+        LOGGER.info("Turnos encontrados " + turnosRespuesta);
         return turnosRespuesta;
     }
     @Override
     public void updateTurno(TurnoUpdateDTO turnoUpdate){
-        Optional<Paciente> paciente = pacienteService.getPacienteById(turnoUpdate.getPaciente_id());
-        Optional<Odontologo> odontologo = odontologoService.getOdontologoById(turnoUpdate.getOdontologo_id());
-        Turno turno = new Turno();
-        Turno turnoDesdeDB = null;
-        TurnoResponseDTO turnoARetornar = null;
-        if(paciente.isPresent() && odontologo.isPresent()){
+        try{
+            Optional<Paciente> paciente = pacienteService.getPacienteById(turnoUpdate.getPaciente_id());
+            Optional<Odontologo> odontologo = odontologoService.getOdontologoById(turnoUpdate.getOdontologo_id());
+            Turno turno = new Turno();
+            Turno turnoDesdeDB = null;
+            TurnoResponseDTO turnoARetornar = null;
             turno.setId(turnoUpdate.getId());
             turno.setPaciente(paciente.get());
             turno.setOdontologo(odontologo.get());
             turno.setFecha(LocalDate.parse(turnoUpdate.getFecha()));
             turnoRepository.save(turno);
+            LOGGER.info("Turno fue actualizado");
+        }catch (ResourceNotFoundException e){
+            LOGGER.info("El paciente con id " + turnoUpdate.getPaciente_id() + " o el odontologo con id " + turnoUpdate.getOdontologo_id() + " no fue encontrado");
+            throw new BadRequestException("El paciente con id " + turnoUpdate.getPaciente_id() + " o el odontologo con id " + turnoUpdate.getOdontologo_id() + " no fue encontrado");
         }
     }
     @Override
     public void deleteTurno(Integer id){
-        turnoRepository.deleteById(id);
+        Optional<Turno>turnoFound= turnoRepository.findById(id);
+        if(turnoFound.isPresent()){
+            LOGGER.info("Turno fue eliminado");
+            turnoRepository.deleteById(id);
+        }else{
+            LOGGER.info("El turno con id  "+ id +" no fue encontrado");
+            throw  new ResourceNotFoundException("El turno con id  "+ id +" no fue encontrado");
+        }
     }
 
     private TurnoResponseDTO mapperTurnoResponseDto(Turno turnoDesdeDB){

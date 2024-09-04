@@ -47,24 +47,14 @@ public class PacienteController {
 
     @PutMapping("/modificar")
     public ResponseEntity<String> modificarPaciente(@RequestBody Paciente paciente){
-        Optional<Paciente> pacienteActual = pacienteService.getPacienteById(paciente.getId());
-        if(pacienteActual.isPresent()){
-            pacienteService.updatePaciente(paciente);
-            return ResponseEntity.status(HttpStatus.OK).body("Paciente fue actualizado");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontro el paciente") ;
-
+        pacienteService.updatePaciente(paciente);
+        return ResponseEntity.status(HttpStatus.OK).body("Paciente fue actualizado");
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarPaciente(@PathVariable Integer id){
-        Optional<Paciente> pacienteActual = pacienteService.getPacienteById(id);
-        if(pacienteActual.isPresent()){
             pacienteService.deletePacienteById(id);
             return  ResponseEntity.status(HttpStatus.OK).body("Paciente fue eliminado");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontro el paciente") ;
-
 
     }
 }
