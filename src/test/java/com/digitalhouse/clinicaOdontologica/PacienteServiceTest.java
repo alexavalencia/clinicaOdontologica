@@ -1,53 +1,60 @@
 package com.digitalhouse.clinicaOdontologica;
 
-import com.digitalhouse.clinicaOdontologica.dao.imp.PacienteDaoH2;
-import com.digitalhouse.clinicaOdontologica.db.H2Connection;
+
 import com.digitalhouse.clinicaOdontologica.entity.Domicilio;
 import com.digitalhouse.clinicaOdontologica.entity.Paciente;
 import com.digitalhouse.clinicaOdontologica.service.impl.PacienteService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Transactional
 class PacienteServiceTest {
+    @Autowired
+    PacienteService pacienteService;
+    Paciente paciente;
+    Paciente pacienteDesdeDb;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PacienteServiceTest.class);
-    private PacienteService pacienteService = new PacienteService(new PacienteDaoH2());
-
-    @BeforeAll
-    static void creatTable(){
-        H2Connection.crearTablas();
+    @BeforeEach
+    void createPaciente(){
+        Domicilio domicilio = new Domicilio(null,"Falsa]",123456,"Cipolleti","Rio. Negro");
+        Paciente paciente = new Paciente();
+        paciente.setApellido("Lopez");
+        paciente.setNombre("Paola");
+        paciente.setDni("4501241");
+        paciente.setFechaIngreso(LocalDate.of(2024,07,20));
+        paciente.setDomicilio(domicilio);
+        pacienteDesdeDb =pacienteService.savePaciente(paciente);
     }
-
     @Test
     @DisplayName("Paciente se guarda en la db con su domicilio")
     void test1(){
-
-        Paciente paciente = new Paciente("Aguirre","Juan","1214721071", LocalDate.of(2024,07,16),
-                new Domicilio("Falsa]",123456,"Cipolleti","Rio. Negro"));
-        Paciente pacienteActual=pacienteService.savePaciente(paciente);
-        assertNotNull(pacienteActual.getId());
+        assertNotNull(pacienteDesdeDb.getId());
     }
 
     @Test
-    @DisplayName("Obtener paciente con id 1")
+    @DisplayName("Obtener paciente con id")
     void test2(){
-
-        Paciente paciente = null;
-        Paciente pacienteActual=pacienteService.getPacienteById(1);
-        assertEquals(1,pacienteActual.getId());
+        Integer id = pacienteDesdeDb.getId();
+        Paciente pacienteActual=pacienteService.getPacienteById(id).get();
+        assertEquals(id,pacienteActual.getId());
     }
 
     @Test
-    @DisplayName("Obtener totod los pacientes")
+    @DisplayName("Obtener todos los pacientes")
     void test3(){
-        assertTrue(pacienteService.getAll().size()>0);
+        assertTrue(!pacienteService.getAll().isEmpty());
     }
-
 }

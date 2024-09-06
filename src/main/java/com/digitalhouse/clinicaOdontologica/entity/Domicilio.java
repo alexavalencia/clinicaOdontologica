@@ -1,6 +1,8 @@
 package com.digitalhouse.clinicaOdontologica.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -13,9 +15,13 @@ public class Domicilio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank(message = "Debes ingresar una calle")
     private String calle;
-    private int numero;
+    @NotNull(message = "Debes ingresar un numero")
+    private Integer numero;
+    @NotBlank(message = "Debes ingresar una localidad")
     private String localidad;
+    @NotBlank(message = "Debes ingresar una provincia")
     private String provincia;
 
 

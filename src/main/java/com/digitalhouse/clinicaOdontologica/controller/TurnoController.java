@@ -5,6 +5,7 @@ import com.digitalhouse.clinicaOdontologica.dto.request.TurnoUpdateDTO;
 import com.digitalhouse.clinicaOdontologica.dto.response.TurnoResponseDTO;
 import com.digitalhouse.clinicaOdontologica.entity.Turno;
 import com.digitalhouse.clinicaOdontologica.service.ITurnoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class TurnoController {
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<?> gurdarTurno(@RequestBody TurnoRequestDTO turnoRequestDTO){
+    public ResponseEntity<?> gurdarTurno(@Valid @RequestBody TurnoRequestDTO turnoRequestDTO){
         TurnoResponseDTO turno1 = turnoService.saveTurno(turnoRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(turno1);
 
@@ -41,7 +42,7 @@ public class TurnoController {
     }
 
     @PutMapping("/modificar")
-    public ResponseEntity<String> modificarTurno(@RequestBody TurnoUpdateDTO turno){
+    public ResponseEntity<String> modificarTurno(@Valid @RequestBody TurnoUpdateDTO turno){
         turnoService.updateTurno(turno);
         return ResponseEntity.status(HttpStatus.OK).body("El turno fue actualizado");
     }

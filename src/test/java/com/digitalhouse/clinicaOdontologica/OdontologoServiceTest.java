@@ -1,54 +1,61 @@
 package com.digitalhouse.clinicaOdontologica;
 
-import com.digitalhouse.clinicaOdontologica.dao.imp.OdontologoDaoH2;
-import com.digitalhouse.clinicaOdontologica.db.H2Connection;
+
+import com.digitalhouse.clinicaOdontologica.entity.Domicilio;
 import com.digitalhouse.clinicaOdontologica.entity.Odontologo;
+import com.digitalhouse.clinicaOdontologica.entity.Paciente;
 import com.digitalhouse.clinicaOdontologica.service.impl.OdontologoService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Transactional
 class OdontologoServiceTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OdontologoServiceTest.class);
-    private OdontologoService odontologoService = new OdontologoService(new OdontologoDaoH2());
-
-    @BeforeAll
-    static void creatTable(){
-        H2Connection.crearTablas();
+    @Autowired
+    OdontologoService odontologoService;
+    Odontologo odontologo;
+    Odontologo odontologoDesdeDb;
+    @BeforeEach
+    void createOdontologo(){
+        odontologo = new Odontologo();
+        odontologo.setApellido("Suarez");
+        odontologo.setNombre("Luis");
+        odontologo.setNumeroMatricula("pe103sa");
+        odontologoDesdeDb =odontologoService.saveOdontologo(odontologo);
     }
 
     @Test
     @DisplayName("Guardar Odontologo")
     void test1(){
-        Odontologo odontologo = new Odontologo("123458","Camila","Valencia");
-        Odontologo odontologoGuardado = odontologoService.saveOdontologo(odontologo);
-        assertNotNull(odontologoGuardado.getId());
-
+        assertNotNull(odontologoDesdeDb.getId());
     }
 
     @Test
     @DisplayName("Obtener odontologo por id")
     void test2(){
-        Odontologo odontologoGuardado = odontologoService.getOdontologoById(2);
-        assertEquals(2, odontologoGuardado.getId());
-        assertEquals("GIRALDO", odontologoGuardado.getApellido());
+        Integer id = odontologoDesdeDb.getId();
+        Odontologo odontologoActual=odontologoService.getOdontologoById(id).get();
+        assertEquals(id,odontologoActual.getId());
 
     }
-
 
     @Test
     @DisplayName("Obtener todos los odontologos")
     void test4(){
-        List<Odontologo> odontologoGuardados = odontologoService.getAll();
-        assertTrue(odontologoGuardados.size()>0);
-
-
+        assertTrue(!odontologoService.getAll().isEmpty());
     }
 
 }

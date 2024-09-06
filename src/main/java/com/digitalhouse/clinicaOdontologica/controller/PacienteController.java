@@ -2,6 +2,7 @@ package com.digitalhouse.clinicaOdontologica.controller;
 
 import com.digitalhouse.clinicaOdontologica.entity.Paciente;
 import com.digitalhouse.clinicaOdontologica.service.IPacienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,12 +42,12 @@ public class PacienteController {
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<Paciente> agregarPaciente(@RequestBody Paciente paciente){
+    public ResponseEntity<Paciente> agregarPaciente(@Valid @RequestBody Paciente paciente){
         return ResponseEntity.ok(pacienteService.savePaciente(paciente));
     }
 
     @PutMapping("/modificar")
-    public ResponseEntity<String> modificarPaciente(@RequestBody Paciente paciente){
+    public ResponseEntity<String> modificarPaciente(@Valid @RequestBody Paciente paciente){
         pacienteService.updatePaciente(paciente);
         return ResponseEntity.status(HttpStatus.OK).body("Paciente fue actualizado");
     }

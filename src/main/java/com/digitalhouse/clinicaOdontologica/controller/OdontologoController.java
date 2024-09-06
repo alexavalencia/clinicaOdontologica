@@ -2,6 +2,7 @@ package com.digitalhouse.clinicaOdontologica.controller;
 
 import com.digitalhouse.clinicaOdontologica.entity.Odontologo;
 import com.digitalhouse.clinicaOdontologica.service.IOdontologoService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +35,12 @@ public class OdontologoController {
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<Odontologo>agregarOdontologo(@RequestBody Odontologo odontologo){
+    public ResponseEntity<Odontologo>agregarOdontologo(@Valid @RequestBody Odontologo odontologo){
         return ResponseEntity.status(HttpStatus.OK).body(odontologoService.saveOdontologo(odontologo));
     }
 
     @PutMapping("/modificar")
-    public ResponseEntity<String> modificarOdontologo(@RequestBody Odontologo odontologo){
+    public ResponseEntity<String> modificarOdontologo(@Valid @RequestBody Odontologo odontologo){
         odontologoService.updateOdontologo(odontologo);
         return ResponseEntity.status(HttpStatus.OK).body("El odontologo fue actualizado");
 
