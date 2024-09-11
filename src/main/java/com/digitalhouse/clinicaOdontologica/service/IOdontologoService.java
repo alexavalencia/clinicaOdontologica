@@ -13,4 +13,5 @@ public interface IOdontologoService {
      void deleteOdontologo(Integer id);
      Odontologo getOdontologoByNumeroMatricula(String numeroMatricula);
      List<Odontologo> getByApellido(String apellido);
+     void addEspecialidad(Integer id_odontologo,Integer id_especialidad);
 }

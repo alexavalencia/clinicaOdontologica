@@ -1,8 +1,10 @@
 package com.digitalhouse.clinicaOdontologica.service.impl;
 
 
+import com.digitalhouse.clinicaOdontologica.entity.Especialidad;
 import com.digitalhouse.clinicaOdontologica.entity.Odontologo;
 import com.digitalhouse.clinicaOdontologica.exception.ResourceNotFoundException;
+import com.digitalhouse.clinicaOdontologica.repository.IEspecialidadRepository;
 import com.digitalhouse.clinicaOdontologica.repository.IOdontologoRepository;
 import com.digitalhouse.clinicaOdontologica.service.IOdontologoService;
 import org.slf4j.Logger;
@@ -17,10 +19,14 @@ public class OdontologoService implements IOdontologoService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(OdontologoService.class);
     private IOdontologoRepository odontologoRepository;
+    private IEspecialidadRepository especialidadRepository;
 
-    public OdontologoService(IOdontologoRepository odontologoRepository) {
+    public OdontologoService(IOdontologoRepository odontologoRepository, IEspecialidadRepository especialidadRepository) {
         this.odontologoRepository = odontologoRepository;
+        this.especialidadRepository = especialidadRepository;
     }
+
+
 
     @Override
     public Odontologo saveOdontologo(Odontologo odontologo) {
@@ -117,5 +123,20 @@ public class OdontologoService implements IOdontologoService {
 
         }
         return odontologosDB ;
+    }
+
+    @Override
+    public void addEspecialidad(Integer id_odontologo, Integer id_especialidad) {
+        Optional<Odontologo> odontologo = odontologoRepository.findById(id_odontologo);
+        Optional<Especialidad> especialidad= especialidadRepository.findById(id_especialidad);
+        Odontologo odontologo1;
+        if(odontologo.isPresent() && especialidad.isPresent()){
+            odontologo1= odontologo.get();
+            odontologo1.getEspecialidades().add(especialidad.get());
+            odontologoRepository.save(odontologo1);
+            LOGGER.info("especialidad agregada");
+        }else{
+            throw new ResourceNotFoundException("El odontologo o especialidad  no fue encontrada");
+        }
     }
 }

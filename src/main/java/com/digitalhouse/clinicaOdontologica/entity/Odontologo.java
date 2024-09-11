@@ -1,6 +1,7 @@
 package com.digitalhouse.clinicaOdontologica.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -33,6 +34,13 @@ public class Odontologo {
     //@JsonManagedReference(value = "odontologo-turno")
     @JsonIgnore
     private Set<Turno> turnoSet;
+
+    @ManyToMany
+    @JoinTable(name="odontologos_especialidades",
+            joinColumns = @JoinColumn(name="odontologo_id"),
+            inverseJoinColumns = @JoinColumn(name="especialidad_id"))
+    @JsonIgnoreProperties("odontologos")
+    private Set<Especialidad> especialidades;
 
 
     @Override

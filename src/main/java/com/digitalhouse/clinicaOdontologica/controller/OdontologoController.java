@@ -63,4 +63,10 @@ public class OdontologoController {
         List<Odontologo> odontologos = odontologoService.getByApellido(apellido);
         return ResponseEntity.status(HttpStatus.OK).body(odontologos);
     }
+
+    @PutMapping("/especialidad")
+    public ResponseEntity<String> agregarEspecialidad(@RequestParam Integer id_odontologo, @RequestParam Integer id_especialidad){
+        odontologoService.addEspecialidad(id_odontologo,id_especialidad);
+        return ResponseEntity.ok("Especialidad Agregada");
+    }
 }
