@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class PacienteService implements IPacienteService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Paciente.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(PacienteService.class);
 
     private IPacienteRepository pacienteRepository;
 
